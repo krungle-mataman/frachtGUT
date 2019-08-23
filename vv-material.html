@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="vv.js"></script>
+    <link rel="stylesheet" href="fg.css">
+
+    <script type="text/javascript"> bcManager="0xBd43Bc29C3702c3AD45cD282B6B52E9f5f3d8B5D"</script>
+    <script type="text/javascript"> bcSpedition="0x2615E158049CB66C8f331B28c90f2E3D4a9CA626"</script>
+    <script type="text/javascript"> bcVersicherung="0x2C9403D894a134e173D6bC56898EFD84B78d45B6"</script>
+    <script type="text/javascript"> bcAccount="0xc9624535E370fc03362Fdd9Ca96dd085e7B0b920"</script>
+
+    <script type="text/javascript"> fgDefaultGaslimit = 2000000</script>
+    <script type="text/javascript"> fgDefaultGasprice = 10000000000</script>
+    <script type="text/javascript"> fgDefaultGas = 300000000</script>
+    <script type="text/javascript"> fgGaslimit = 5000000</script>
+    
+    <script type="text/javascript"> gebuehr2=1000000000000000000000</script>
+    <script type="text/javascript"> gebuehr1=1000000000000000000;</script>
+    <script type="text/javascript"> kooperationContractADR = "0x8bA835Dc8531f6E0f7C44047603674278e09370F"</script>
+    <script type="text/javascript"> versicherungsvertragContractADR = "0x6aDb967ED798829192DaFc48ec23Cbe261FeC1e2"</script>
+
+    <script type="text/javascript">
+      function Werteliste (querystring) {
+        
+        if (querystring == '') return;
+        var wertestring = querystring.slice(1);
+        var paare = wertestring.split("&");
+        var paar, name, wert;
+        for (var i = 0; i < paare.length; i++) {
+          paar = paare[i].split("=");
+          name = paar[0];
+          wert = paar[1];
+          name = unescape(name).replace("+", " ");
+          wert = unescape(wert).replace("+", " ");
+          if (name=="kp") kooperationContractADR = wert;
+          if (name=="bcm") bcManager=wert;
+        }
+        //alert(kooperationContractADR);
+      }
+      var liste = new Werteliste(location.search);
+    </script>
+
+    <script>
+        window.onload = function() {
+            initVue();
+        }
+    </script>
+</head>
+
+<style>
+
+    
+</style>
+<body>
+    <div id="app">
+      <div class="titel">
+          <h1 >FrachtGUT</h1>
+          <h2>Ein Prototyp zur Frachtverfolgung und Schadenmeldung</h2>
+          
+      </div>
+
+      <div class="ebene1">
+          <div class="element">Kooperation {{ dieKooperationName }} ({{ dieKooperationAdresse }})</div>
+       </div>   
+ 
+
+       <template>
+        <div>
+          <md-table v-model="versicherungsvertraege" md-card @md-selected="onSelect">
+            <md-table-toolbar>
+              <h3 class="md-title">Selection Colors</h1>
+            </md-table-toolbar>
+      
+            <md-table-row slot="md-table-row" slot-scope="{ vertrag }" :class="getClass(item)" md-selectable="single">
+              <md-table-cell md-label="ID" md-sort-by="id" md-numeric>{{ vertrag.id }}</md-table-cell>
+              <md-table-cell md-label="Name" md-sort-by="name">{{ vertrag.versicherer }}</md-table-cell>
+
+            </md-table-row>
+          </md-table>
+      
+          <p>Selected:</p>
+          {{ selected }}
+        </div>
+      </template>
+
+
+      <div class="ebene1">
+        <div class="abschnitt">Versicherungsverträge ({{ anzahlVersicherungsvertraege }})</div>
+           <table style="table-layout:fixed" class="ebene1">
+              <thead>
+                  <tr>
+                    <th>Vertrag</th>
+                    <th>Versicherer</th>
+                    <th>Versicherungsnehmer</th>
+                    <th>Tarif</th>
+                    <th>Summe</th>
+                    <th>Status</th>
+                    <th>Adresse</th>
+                  </tr>
+              </thead>
+              <tbody class="ebene1">
+                      <tr class="ebene1" v-for="vertrag in versicherungsvertraege">
+                          <td>{{ vertrag.id }} </td>
+                          <td>{{ vertrag.versicherer }} </td>
+                          <td>{{ vertrag.versicherungsnehmer }} </td>
+                          <td>{{ vertrag.tarif}} </td>
+                          <td>{{ vertrag.summe }} </td>
+                           <td>{{ vertrag.status}} </td>
+                          <td class="adresse">{{ vertrag.adresse}} </td>
+                        </tr>
+                        
+               </tbody>
+               <tfoot>
+                      <tr>
+                        <td colspan="8" class="anmerkung" >Liste aller Verträge in der bc frachtGUT</td>
+                      </tr>
+               </tfoot>
+              </table>
+
+              <div class="aktionen">
+                <table>
+                  <tr>Aktionen:</tr>
+                    <tr>
+                      <td><button id="bt2" class="action" v-on:click="VersicherungsvertragSuchen">Verträge suchen</button></td>
+                      <td></td>
+                    </tr>
+
+                  </table>
+              </div>
+
+            </div>       
+              <div class="ebene1">
+                <div class="element">Versicherungsvertrag ({{ versicherungsvertragsadresse }})</div>
+                  <table>
+                      <tr>
+                          <td class="feld">Id</td><td>{{ id }}</td>
+                          <td class="feld">Status</td><td>{{ status }}</td>
+                          <td class="feld">Adresse</td><td>{{ versicherungsvertragsadresse }}</td>
+                      </tr>
+                    <tr>
+                        <td class="feld">VU</td><td>{{ versicherer }}</td>
+                        <td class="feld">VN</td><td>{{ versicherungsnehmer }}</td>
+                    </tr>
+                    <tr>
+                      <td class="feld">Summe</td><td> {{ summe }}</td>
+                      <td class="feld">Tarif</td><td>{{ tarif }}</td>                      
+                    </tr>
+                    <tr>
+                      <td class="feld">Beginn</td><td> {{ beginn }}</td>
+                      <td class="feld">Ende</td><td>{{ ende }}</td>
+                      <td class="feld">Laufzeit</td><td>{{ laufzeit }}</td>
+                    </tr>
+                    <tr>
+                      <td class="feld">Schäden</td><td>{{ schaden }}</td>
+                    </tr>
+
+
+                  </table>
+    
+                  <div class="aktionen">
+                  <table>
+                      <tr>Aktionen:</tr>
+                      <tr>  
+                          <td><button id="bt2" class="action" v-on:click="VersicherungsvertragAnzeigen">Vertrag auswählen</button></td>
+                          <td><input v-model="VersicherungsvertragFindenID" class="eingabe" placeholder="Versicherungsvertragid"></td>
+                      </tr>
+                      <tr>
+                          <td><button v-on:click="VersicherungsvertragAnlegen" id="bt2" class="action">Vertrag anlegen</button></td></td>
+                      </tr>
+                      <tr>  
+                          <td><button id="bt2" class="action" v-on:click="VersicherungsvertragRegistrieren">Vertrag registrieren</button></td>
+                      </tr>
+
+
+                  </table>
+                </div>
+              </div>
+
+
+             
+            <div class="ebene1">
+              <div class="element">Transporte ({{ anzahlTransporte }})</div>
+                  <div class="aktionen">
+                  <table>
+                      <tr>Aktionen:</tr>
+                      <tr>
+                          <td><button id="bt2" class="action"  v-on:click="NaechsteSeite">Transporte suchen</button></td>
+                      </tr> 
+                </table>
+              </div>
+            </div>
+
+
+
+              <div class="system">Systeminformationen </div>
+
+              <table class="system"> 
+                <tr >
+                    <td>Nachrichten:</td><td colspan="3" >{{ Systeminfo }}</td>
+                </tr> 
+                <tr>
+                  <td>Aktionen</td>
+                  <td><button v-on:click="TestparameterErzeugen" class="action">Testparameter belegen</button></td>
+                  <td><button v-on:click="TestdatenErzeugen" class="action">Testdaten erzeugen</button></td>
+                </tr>
+                <tr>
+                  <td>Transaktionsparameter</td>
+                  <td  size="25">{{ trInfo4 }} </td>
+                  <td  size="15">{{ trInfo1 }} </td>     
+                  <td  size="15">{{ trInfo2 }} </td> 
+                  <td  size="15">{{ trInfo3 }} </td> 
+ 
+                </tr>
+              </table>
+            </div>
+    
+
+
+</body>
+</html>

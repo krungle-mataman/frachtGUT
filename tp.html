@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="tp.js"></script>
+    <link rel="stylesheet" href="fg.css">
+  
+    <script type="text/javascript"> bcManager="0xBd43Bc29C3702c3AD45cD282B6B52E9f5f3d8B5D"</script>
+    <script type="text/javascript"> bcSpedition="0x2615E158049CB66C8f331B28c90f2E3D4a9CA626"</script>
+    <script type="text/javascript"> bcVersicherung="0x2C9403D894a134e173D6bC56898EFD84B78d45B6"</script>
+    <script type="text/javascript"> bcAccount="0xc9624535E370fc03362Fdd9Ca96dd085e7B0b920"</script>
+
+    <script type="text/javascript"> fgDefaultGaslimit = "200000"</script>
+    <script type="text/javascript"> fgDefaultGasprice = "10000000000"</script>
+    <script type="text/javascript"> fgDefaultGas = "4700000"</script>
+    <script type="text/javascript"> fgGaslimit = 200000</script>
+    
+    <script type="text/javascript"> gebuehr2=1000000000000000000000</script>
+    <script type="text/javascript"> gebuehr1=1000000000000000000;</script>
+    <script type="text/javascript"> gebuehr0=0;</script>
+
+  
+    <script type="text/javascript"> kooperationContractADR = "0xDbF929fCf703Ed250699E6844E9ccC50226187b9"</script>
+    <script type="text/javascript"> versicherungsvertragContractADR = "0x6aDb967ED798829192DaFc48ec23Cbe261FeC1e2"</script>
+    <script type="text/javascript"> transportContractADR = "'0x92b9816D23A246695f98162A91c7561AB232880D"</script>
+    
+
+    <script type="text/javascript">
+      function Werteliste (querystring) {
+        kooperationContractADR="#";
+        versicherungsvertragContractADR="#";
+        if (querystring == '') return;
+        var wertestring = querystring.slice(1);
+        var paare = wertestring.split("&");
+        var paar, name, wert;
+        for (var i = 0; i < paare.length; i++) {
+          paar = paare[i].split("=");
+          name = paar[0];
+          wert = paar[1];
+          name = unescape(name).replace("+", " ");
+          wert = unescape(wert).replace("+", " ");
+          if (name=="bcm") bcManager=wert;
+          if (name=="kpAdresse") kooperationContractADR = wert;
+          if (name=="kpName") kooperationName = wert;
+          if (name=="vvAdresse") versicherungsvertragContractADR = wert;
+          if (name=="vvName") versicherungsvertragName = wert;
+        }
+      }
+      var liste = new Werteliste(location.search);
+      </script>
+
+
+<script>
+        window.onload = function() {
+            initVue();
+        }
+    </script>
+</head>
+
+<body>
+  <div id="app">
+    <header>
+      <div class="titel">
+          <h3><img src="bcclogo.png" width="100" height="100" align="right"> </h3>
+
+        <h1 >FrachtGUT</h1>
+        <h2>Ein Prototyp zur Frachtverfolgung und Schadenmeldung</h2>
+        <h4>Ein Produkt der Block-Chain-Community ....</h4>
+      </div>
+  </header>
+    <div class="nachricht">
+        <table>
+          <tr>
+            {{ Systeminfo }}
+          </tr>
+        </table>
+    </div>
+
+    <div class="ebene1">
+      <div class="element">Kooperation {{ dieKooperationName}} ({{ dieKooperationAdresse }})
+          </div>
+      <div class="element">Versicherungsvertrag {{ derVersicherungsvertragName }} ({{ derVersicherungsvertragAdresse }})
+        </div>
+    </div>
+
+    
+    <div class="ebene1">
+      <p class="abschnitt">Transporte ({{ anzahlTransporte }})</p>
+        <table>
+            <thead>
+              <tr>
+                <th>Auswahl</th>
+                <th>Spedition</th>
+                <th>Absender</th>
+                <th>Datum</th>
+                <th>Status</th>
+                <th>Warenwert</th>
+                <th>ID</th>
+              </tr>
+          </thead>
+          <tbody>
+            <tr class="ebene1" v-for="transport in transporte">
+              <td><button id="bt1" @click="TransportAuswaehlen(transport.adresse)">.</button></td>
+              <td>{{ transport.spedition }} </td>
+              <td>{{ transport.absender }} </td>
+              <td>{{ transport.ort }} </td>
+              <td>{{ transport.status}} </td>
+              <td>{{ transport.warenwert}} </td>
+              <td class="adresse">{{ transport.adresse}} </td>
+            </tr>
+          </tbody>
+          <tfoot>
+              <tr>
+                <td colspan="9" class="anmerkung" >Liste aller Transport zum o.g. Vertrag in der bc frachtGUT</td>
+                </tr>
+          </tfoot>
+        </table>
+    <table>
+        <div class="aktionen">
+          <tr>Aktionen:</tr>
+          <tr>
+              <td><button id="bt2" class="action" v-on:click="TransporteFinden">Transporte suchen</button></td>
+          </tr>
+
+
+       </div>
+    </table>        
+  </div>
+
+  <div class="ebene1">
+      <p class="abschnitt">Transport ({{ derTransportAdresse }})</p> 
+        <table>
+            <tr> 
+              <td class="feld">Id</td> <td><input v-model="tpIdentifikation" class="eingabe" placeholder="id"></td>
+              <td class="feld">Adresse</td> <td><input v-model="tpAdresse" class="eingabe" placeholder="adresse"></td>
+            </tr>
+
+            <tr>
+              <td class="feld">Spedition</td><td><input v-model="tpSpedition" class="eingabe" placeholder="spedition"></td>
+              <td class="feld">Warenwert</td><td><input v-model="tpWarenwert" class="eingabe" placeholder="wert"></td>
+              <td class="feld">Schäden</td><td><input v-model="tpSchaeden" class="eingabe" placeholder="0"></td>
+            </tr>
+
+            <tr>    
+              <td class="feld">Absender</td><td><input v-model="tpAbsenderName" class="eingabe" placeholder="von"></td>
+              <td class="feld">Absendedatum</td> <td><input v-model="tpAbsenderDatum" class="eingabe" placeholder="am"></td>
+              <td class="feld">Absendeort</td>  <td><input v-model="tpAbsenderOrt" class="eingabe" placeholder="woher"></td>
+              </tr>
+
+              <tr>  
+                <td class="feld">Adressat</td><td><input v-model="tpAdressatName" class="eingabe" placeholder="an"></td>
+                <td class="feld">Zustelldatum</td><td><input v-model="tpAdressatDatum" class="eingabe" placeholder="am"></td>
+                <td class="feld">Zustellort</td><td><input v-model="tpAdressatOrt" class="eingabe" placeholder="wohin"></td>
+            </tr>
+            <tr> 
+
+              <td class="feld">Menge</td><td><input v-model="tpMenge" class="eingabe" placeholder="wieviel"></td>
+              <td class="feld">Einheit</td> <td><input v-model="tpEinheit" class="eingabe" placeholder="einheit"></td>
+              <td class="feld">Art</td> <td><input v-model="tpArt" class="eingabe" placeholder="art"></td>
+            </tr>
+          </table>
+
+        <table>
+                <div class="aktionen">
+                  <tr>Aktionen:</tr>
+            <tr>
+                <td><button id="bt2" class="action" v-on:click="TransportAnzeigen">Transport anzeigen</button></td>
+                <td><button id="bt2" class="action" v-on:click="TransportAendern">Transport ändern</button></td>
+                <td><button id="bt2" class="action" v-on:click="TransportAnlegen">Transport Anlegen</button></td>        
+            </tr>
+        </table>
+
+
+  </div>
+
+  <div class="ebene1">
+    <p class="abschnitt">Routen ({{ anzahlRouten }})</p> 
+    <div class="ebene1">
+      <table>
+        <thead>
+           <tr>
+              <th>Auswahl</th>
+              <th>Übergabeort</th>
+              <th>Übergabedatum</th>
+              <th>Frachtführer</th>
+              <th>Menge</th>
+              <th>Schaden</th>
+              <th>ID</th>
+            </tr>
+        </thead>
+        <tbody>
+                <tr class="ebene1" v-for="route in routen">
+                   <td><button id="bt1" @click="RouteAuswaehlen(route.nr)">.</button></td>
+                  <td>{{ route.ort }} </td>
+                  <td>{{ route.datum }} </td>
+                  <td>{{ route.frachtfuehrer }} </td>
+                  <td>{{ route.menge }}</td>
+                  <td>{{ route.schaden }} </td>
+                  <td>{{ route.adresse }} </td>
+                </tr>
+          </tbody>
+        <tfoot>
+            <tr>
+              <td colspan="8" class="anmerkung" >Liste aller Routen zum o.g. Transport in der bc frachtGUT</td>
+              </tr>
+        </tfoot>
+    </table>
+
+    <table>
+        <div class="aktionen">
+          <tr>Aktionen:</tr>
+          <tr>
+            <td><button id="bt2" class="action" v-on:click="RoutenSuchen">Routen suchen</button></td>
+          </tr>        
+        </div>
+    </table>
+    </div>
+  </div>
+
+
+    <div class="ebene1">
+        <p class="abschnitt">Übergabe ({{ dieRoute }})</p> 
+        <table>
+          <tr>
+            <td class="feld">Von-Ort</td><td><input v-model="rtVon" class="eingabe" placeholder="startort"></td>
+            <td class="feld">am Datum</td>  <td><input v-model="rtAbfahrt" class="eingabe" placeholder="abfahrtsdatum"></td>
+          </tr>
+          <tr>
+              <td class="feld">Nach-Ort</td>  <td><input v-model="rtNach" class="eingabe" placeholder="zielort"></td>
+              <td class="feld">zum Datum</td>  <td><input v-model="rtAnkunft" class="eingabe" placeholder="ankunftdatum"></td>
+          </tr>
+          <tr>
+              <td class="feld">Schaden</td> <td><input v-model="rtSchaden" class="eingabe" placeholder="0-nein / 1-Total / 2-Pruef"></td>
+          </tr>
+        </table>
+        <table>
+          <div class="aktionen">
+            <tr>Aktionen:</tr>
+            <tr>
+              <td><button v-on:click="RouteAendern" id="bt2" class="action">Übergabe ändern</button></td>
+              <td><button v-on:click="RouteAnlegen" id="bt2" class="action">Übergabe anlegen</button></td>
+              <td><button id="bt2" class="action" v-on:click="RoutenAnzeigen">Route auf Karte anzeigen</button></td>
+            </tr>   
+          </div>  
+        </table>
+    </div>
+
+    <footer>
+      <div class="system">Systeminformationen </div>
+        <table class="system"> 
+          <tr>
+            <td>Aktionen</td>
+            <td><button v-on:click="TestparameterErzeugen" class="action">Testparameter belegen</button></td>
+          </tr>
+          <tr>
+            <td>Transaktionsparameter</td>
+            <td  size="25">{{ trInfo4 }} </td> 
+            <td  size="25">{{ trInfo1 }} </td>     
+            <td  size="25">{{ trInfo2 }} </td> 
+            <td  size="25">{{ trInfo3 }} </td> 
+          </tr>
+        </table>
+      </div>
+  </footer>
+
+</body>
+</html>

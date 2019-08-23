@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="vue.js"></script>
+    <script>
+        window.onload = function() {
+            initVue();
+        }
+    </script>
+</head>
+<style>
+
+    table, th, td, tr { border: grey; border-block-style: inherit}
+    th {background-color: rgb(38, 0, 100);color: floralwhite;font-size: smaller;font-style: oblique;margin-top:5em;padding: 5px}
+    td {border: blue;background-color: cornflowerblue;font-size:x-large large;font-style: normal;margin: 3px;padding: 8px}
+      #coll         { border-collapse: collapse; }
+      #sepa         { border-collapse: separate; margin-top: 2em; }
+      caption       { text-align: left; }
+
+    h1  {font-size: x-large;color:greenyellow}
+    h2 {font-size: large;font-style: italic}
+
+        body {
+           background-color:#E0E0E0;
+           color: black;
+           font-weight: bold;
+           font-family: Arial;
+           font-size: 120%;
+        }
+        .bluebox {
+           background-color: #3333DD;
+           color: white;
+           padding: 10px;
+           margin: 10;
+        }
+        .greybox {
+           background-color:lightgray;
+           color: darkgray;
+           padding: 10px;
+           margin: 10;
+        }
+        .blue {
+           background-color: #3333DD;
+           color: white;
+           padding: 10px;   
+           margin-top: 10x;
+        }
+        .greenbox {
+           background-color: mediumseagreen;
+           color: greenyellow;
+           padding: 5px;
+           margin-top: 5px;
+           font-style: initial;
+    
+
+        }
+        .gelb {
+           background-color: #FFFF66;
+           color: black;
+           padding: 10px;
+           margin-top: 10x;
+        }
+        .anmerkung {
+           background-color: lightslategrey(102, 255, 110);
+           font-size: small;
+           font-style: italic;
+           color: gray;
+           padding: 5px;
+        }        
+         .action {
+           background-color: gray(102, 255, 110);
+           color: black;
+           padding: 5px;
+           box-shadow: 5px;
+        } 
+        .eingabe {
+           background-color: white(102, 255, 110);
+           color: black;
+           padding: 5px;
+           margin: 5px;
+   
+        } 
+        </style>
+<body>
+    <div id="app">
+      <div class="greenbox">
+          <h1 >FrachtGUT</h1>
+          <h2>Ein Prototyp zur Frachtverfolgung und Schadenmeldung</h2>
+        </div>
+        
+
+        <p class="greybox">Versicherungsverträge</p>
+      </b>
+
+          <table>
+
+                  <thead>
+                      <tr>
+                        <th>Unternehmen</th>
+                        <th>Versicherungsnehmer</th>
+                        <th>Vertragsnummer</th>
+                        <th>Deckung</th>
+                        <th>Vertragsbeginn</th>
+                        <th>Status</th>
+                        <th>Adresse</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr>
+                        <td>ruv</td>
+                        <td>Frank Jungbeck</td>
+                        <td>89993</td>
+                        <td>100000 Euro </td>
+                        <td>15.5.2015</td>
+                        <td>Aktiv</td>
+                        <td>o9430uxxee</td>
+                      </tr>
+                      <tr>
+                              <td>ruv</th>
+                                  <td>Thomas Rudolf</td>
+                              <td>8955993</td>
+                              <td>200000 Euro </td>
+                              <td>15.5.2016</td>
+                              <td>Aktiv</td>
+                              <td>o9430urtzxxee</td>
+                            </tr>
+                            <tr>
+                                  <td>extern</td>
+                                  <td>Klaus Schäfer</td>
+                                  <td>A453</td>
+                                  <td>2000000 Euro </td>
+                                  <td>15.5.2017</td>
+                                  <td>Aktiv</td>
+                                  <td>o9430u345rtzxxee</td>
+                                </tr>
+                                <tr>
+                                      <td>...</th>
+                                          <td>...</td>
+                                          <td>...</td>
+                                          <td>...</td>
+                                          <td>...</td>
+                                          <td>...</td>
+                                          <td>...</td>
+                                </tr>
+                    </tbody>
+                  <tfoot>
+                      <tr>
+                        <td colspan="7" class="anmerkung" >Liste aller Verträge in der bc frachtGUT</td>
+                      </tr>
+                  </tfoot>
+              </table>
+        
+                <div>
+                        <button v-on:click="neuerVersicherungsvertrag" class="action">Neuer Vertrag</button>
+                        <input v-model="neuerVersicherungsnehmer" class="eingabe"  placeholder="Versicherungsnehmer">
+                        <input v-model="neueVersicherugsnummer" class="eingabe" placeholder="Versicherungsnummer">
+                        <input v-model="neueVersicherugsnummer" class="eingabe" placeholder="Deckung">
+                    </div>
+                    
+        <p class="greybox">Transporte</p>
+
+        <div>
+           
+          <button v-on:click="TransportFinden">Transport zum Vertrag suchen</button>  
+          <input v-model="TransportFindenVNR" class="eingabe" placeholder="Vertragsnummer">
+          <input v-model="TransportFindenVAD" class="eingabe" placeholder="Vertragsadresse">
+      </div>
+
+
+        <table>
+
+                <thead>
+                    <tr>
+                      <th>Spedition</th>
+                      <th>Absender</th>
+                      <th>Identifikation</th>
+                      <th>Warenwert</th>
+                      <th>Datum</th>
+                      <th>Ziel</th>
+                      <th>Adresse</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                      <td>spedition frei</td>
+                      <td>Frank Jungbeck</td>
+                      <td>T43222</td>
+                      <td>10003 Euro </td>
+                      <td>15.5.2019</td>
+                      <td>Dortmund</td>
+                      <td>o9430uxxee</td>
+                    </tr>
+                    <tr>
+                            <td>spedition freier</td>
+                            <td>Paul Breitner</td>
+                            <td>T43299722</td>
+                            <td>100 Euro </td>
+                            <td>15.6.2019</td>
+                            <td>München</td>
+                            <td>o9430uxxee</td>
+                          </tr>     
+                          
+                    <tr>
+                        <td>spedition freierer</td>
+                        <td>Uwe Seeler</td>
+                        <td>T899999722</td>
+                        <td>100000 Euro </td>
+                        <td>15.7.2019</td>
+                        <td>Leipzig</td>
+                        <td>o9430uxxee</td>
+                    </tr>  
+                        <tr>
+                            <td>...</th>
+                                <td>...</td>
+                                <td>...</td>
+                                <td>...</td>
+                                <td>...</td>
+                                <td>...</td>
+                                <td>...</td>
+                        </tr>
+                  </tbody>
+                <tfoot>
+                    <tr>
+                      <td colspan="7" class="anmerkung" >Liste aller Transport zum o.g. Vertrag in der bc frachtGUT</td>
+                    </tr>
+                </tfoot>
+            </table>
+    
+
+
+        <div>
+           
+                <button v-on:click="neuerTransport">Neuen Transport anlegen</button>  
+                <input v-model="neuerTransportName" class="eingabe" placeholder="Absender">
+                <input v-model="neuerTransportName" class="eingabe" placeholder="Warenwert">
+                <input v-model="neuerTransportName" class="eingabe" placeholder="Ziel">
+                <input v-model="neuerTransportName" class="eingabe" placeholder="Identifikation">
+            </div>
+        <ul>  
+          <!--  <li v-for="transport in transporte">{{ transport.id }} ({{ transport.address}})</li> >-->
+          <table>
+            <tr v-for="transport in transporte">
+               {{ transport.id }} ({{ transport.address}})
+            </tr>
+          </table>
+
+        </ul>
+
+
+    </div>
+</body>
+</html>

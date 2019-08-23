@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="kp.js"></script>
+    <link rel="stylesheet" href="fg.css">
+    
+    <script type="text/javascript"> bcManager=" "</script>
+    <script type="text/javascript"> bcSpedition="0x2615E158049CB66C8f331B28c90f2E3D4a9CA626"</script>
+    <script type="text/javascript"> bcVersicherung="0x2C9403D894a134e173D6bC56898EFD84B78d45B6"</script>
+    <script type="text/javascript"> bcAccount="0xd432dC0FCE0Bc21598Fe4bc6338B81DE35A1b0Fe"</script>
+
+    <script type="text/javascript"> fgDefaultGaslimit = "200000"</script>
+    <script type="text/javascript"> fgDefaultGasprice = "10000000000"</script>
+    <script type="text/javascript"> fgDefaultGas = "4700000"</script>
+    <script type="text/javascript"> fgGaslimit = 200000</script>
+
+
+    <script type="text/javascript"> gebuehr2=1000000000000000000000</script>
+    <script type="text/javascript"> gebuehr1=1000000000000000000;</script>
+    <script type="text/javascript"> gebuehr0=0;</script>
+
+    <script type="text/javascript">
+      function Werteliste (querystring) {
+        if (querystring == '') return;
+        var wertestring = querystring.slice(1);
+        var paare = wertestring.split("&");
+        var paar, name, wert;
+        for (var i = 0; i < paare.length; i++) {
+          paar = paare[i].split("=");
+          name = paar[0];
+          wert = paar[1];
+          name = unescape(name).replace("+", " ");
+          wert = unescape(wert).replace("+", " ");
+          bcManager = wert;
+          //alert("bcm:" + bcManager);
+        }
+      }
+      var liste = new Werteliste(location.search);
+      </script>
+
+    <script>
+        window.onload = function() {
+            initVue();
+        }
+    </script>
+
+
+</head>
+
+<style>
+
+        </style>
+<body>
+  <div id="app">
+    <div class="titel">
+      <h1 >FrachtGUT</h1>
+      <h2>Ein Prototyp mit einer Übersicht über das Netzwerk</h2>
+    </div>
+
+    <div class="nachricht">
+      <table>
+        <tr>
+          {{ Systeminfo }}
+        </tr>
+      </table>
+    </div>
+
+    <div class="abschnitt">Kooperationen ({{anzahlKooperationen}})
+    </div>
+    <div class="ebene1">
+        <table style="table-layout:fixed" class="ebene1">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Details</th>
+              <th>Beschreibung</th>
+              <th>Saldo</th>
+            </tr>
+          </thead>
+          <tbody class="ebene1">
+            <tr class="ebene1" v-for="kooperation in kooperationen">
+              <td>{{ kooperation.adresse }} </td>
+              <td>{{ kooperation.name }} </td>
+              <td>{{ kooperation.details }} </td>
+              <td>{{ kooperation.beschreibung }} </td>
+              <td class="adresse">{{ kooperation.saldo }} </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="8" class="anmerkung" >Liste der Kooperationen </td>
+            </tr>
+          </tfoot>
+        </table>
+        <div class="aktionen">
+          <table>
+            <tr>
+              Aktionen : 
+            </tr>
+          </table>
+        </div>
+        <div>
+          <table>
+            <tr>
+              <td><button v-on:click="KooperationSuchen" id="bt2"  class="action">Kooperationen suchen</button></td>
+            </tr>
+          </table>
+
+        </div>
+    </div>
+
+    <div class="abschnitt">Kooperation ({{ dieKooperation }})  </div>
+      <div class="ebene1">
+        <table>
+          <tr>
+            <td class="feld">Adresse</td>
+            <td><input v-model="kpAdresse" size="50" class="eingabe" ></td>
+          </tr>
+          <tr>
+              <td class="feld">Name</td>
+             <td><input v-model="kpName" size="50" class="eingabe" ></td>
+          </tr>
+          <tr>
+            <td class="feld">Details</td>
+            <td><input v-model="kpDetails" size="50" class="eingabe" ></td>
+          </tr>
+          <tr>
+              <td class="feld">Beschreibung</td>
+             <td><input v-model="kpBeschreibung" size="150" class="eingabe"></td> 
+          </tr>
+        </table>  
+
+        <div class="aktionen">
+          <table>
+              <tr>
+                Aktionen
+              </tr>
+              <tr>
+                <td><button class="action" colspan="3" id="bt2" v-on:click="KooperationAnzeigen">Kooperation anzeigen </button></td>
+                <td><button class="action" colspan="3" id="bt2" v-on:click="KooperationAendern">Kooperation aendern </button></td>
+                <td><button class="action" colspan="3" id="bt2" v-on:click="KooperationAnlegen">Kooperation anlegen </button></td>
+              </tr>
+          </table>
+        </div>
+
+    </div>
+
+    <div class="abschnitt">Versicherungen  ({{ anzahlVersicherungen }})  </div>
+      <div class="ebene1">
+         <table style="table-layout:fixed" class="ebene1">
+            <thead>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Branche</th>
+              <th>Kategorie</th>
+              <th>Tarife</th>
+              <th>Saldo</th>
+              <th>Währung</th>
+              <th>Konto</th>
+            </thead>
+            <tbody class="ebene1">
+                  <tr class="ebene1" v-for="versicherung in versicherungen">
+                      <td class="id">{{ versicherung.id }} </td>
+                      <td>{{ versicherung.name }} </td>
+                      <td>{{ versicherung.branche }} </td>
+                      <td>{{ versicherung.kategorie }} </td>
+                      <td>{{ versicherung.tarife }} </td>
+                      <td class="adresse">{{ versicherung.saldo }} </td>
+                      <td class="adresse">{{ versicherung.waehrung }}</td>
+                      <td class="adresse">{{ versicherung.adresse}} </td>
+                    </tr>
+                       
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="8" class="anmerkung" >Liste aller Versicherungen in der Kooperation</td>
+              </tr>
+            </tfoot>
+          </table>
+
+
+          <table>
+            <div class="aktionen">
+              <tr>Aktionen:</tr>
+            </div>
+            <tr>  
+              <td>
+                <button v-on:click="VersicherungSuchen" id="bt2" class="action">Versicherung suchen</button>
+              </td>
+            </tr>
+            <tr>
+                <td><button v-on:click="VersicherungAnlegen" id="bt2" class="action">Neue Versicherung</button></td></td>
+                <td><input v-model="uUnternehmenname" class="eingabe"  placeholder="unternehmensname"></td>
+                <td><input v-model="uUnternehmentarif" class="eingabe" placeholder="unternehmenstarife"></td>
+            </tr>
+          </table>
+
+
+          </div>
+          <div class="abschnitt">Speditionen  ({{ anzahlSpeditionen }}) </div>
+
+          <div class="ebene1">
+             <table style="table-layout:fixed" class="ebene1">
+                <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Branche</th>
+                        <th>Kategorie</th>
+                        <th>Gebiet</th>
+                        <th>Saldo</th>
+                        <th>Währung</th>
+                        <th>Konto</th>
+                      </tr>
+                  </thead>
+                <tbody class="ebene1">
+                      <tr class="ebene1" v-for="spedition in speditionen">
+                          <td class="id">{{ spedition.id }} </td>
+                          <td>{{ spedition.name }} </td>
+                          <td>{{ spedition.branche }}</td>
+                          <td>{{ spedition.kategorie }}</td>
+                          <td>{{ spedition.gebiet }}</td>
+                              <td class="adresse">{{ spedition.saldo }} </td>
+                          <td class="adresse">{{ spedition.waehrung }} </td>
+                          <td class="adresse">{{ spedition.adresse}} </td>
+                        </tr>
+                           
+                  </tbody>
+                  <tfoot>
+                      <tr>
+                        <td colspan="8" class="anmerkung" >Liste aller Speditionen in der Kooperation</td>
+                      </tr>
+                  </tfoot>
+              </table>
+    
+              <div class="aktionen">
+                <table>
+                  <tr>Aktionen:</tr>
+                  <tr>
+                    <td> 
+                      <button v-on:click="SpeditionSuchen" id="bt2" class="action">Speditionen suchen</button>
+                    </td>
+                  </tr>
+  
+                  <tr>
+                    <td>
+                      <button v-on:click="SpeditionAnlegen" id="bt2" class="action">Neue Spedition</button>
+                    </td>
+                    <td>
+                      <input v-model="  sSpeditionname" class="eingabe"  placeholder="unternehmensname">
+                    </td>
+                  </tr>
+
+                </table>
+              </div>
+        </div>
+  
+        <div class="abschnitt">Versicherungsvertraege  ({{ anzahlVersicherungsvertraege }})  </div>
+          <div class="ebene1">
+            <div class="aktionen">
+                <table>
+                  <tr>Aktionen:</tr>
+                  <tr>
+                    <td>
+                        <button v-on:click="NaechsteSeite" id="bt2" class="action">Verträge anzeigen</button>
+                    </td>
+                  </tr>
+                </table>
+              
+          </div>
+        </div>
+
+
+        <div class="system">Systeminformationen</div>
+          <div class="ebene1">
+              <table class="system"> 
+                <tr >
+                  <td>Nachrichten:</td>
+                </tr> 
+                <tr>
+                  <td class="feld">Manager</td><td class="adresse">{{ bcManager }}</td>
+                </tr>
+                <tr>
+                  <td>Aktionen</td>
+                  <td><button v-on:click="EingabefelderInitialisieren" class="action">Testparameter belegen</button></td>
+                  <td><button v-on:click="TestdatenErzeugen" class="action">Testdaten erzeugen</button></td>
+                </tr>
+                <tr>
+                  <td>Transaktionsparameter</td>
+                  <td  size="25">{{ trInfo4 }} </td>  
+                  <td  size="25">{{ trInfo1 }} </td>     
+                  <td  size="25">{{ trInfo2 }} </td> 
+                  <td  size="25">{{ trInfo3 }} </td> 
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+
+
+ 
+
+
+
+</body>
+</html>
