@@ -1450,7 +1450,7 @@ function initVue() {
   data.bcPrototypVersion = bcPrototypVersion;
 
 
-  data.kpAdresse="0x9C968a1667D703f69376a39CA4f69cf11ad8631C";
+  data.kpAdresse="0x6823E53811BC4C7A5a36Fc1bD28C78D6791c5F03";
   
   transaktionInitialisieren(data);
 
