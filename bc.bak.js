@@ -175,51 +175,40 @@ function kontenAktualisieren(data){
 
 
   var v;
-  data.kpManagerSaldo="0";
-  web3.eth.getBalance(data.kpManager,(err,value) => {
+  data.bcManagerSaldo="0";
+  web3.eth.getBalance(data.bcManagerDef,(err,value) => {
     if (err) { console.log(err); }
     if (!err) { 
       //var v = web3.utils.fromWei(value[0], 'ether');
       //web3.utils.fromWei(web3.utils.toBN(updatedBalance).toString() )
       var v = value / 1e18;
-      data.kpManagerSaldo = v;
+      data.bcManagerSaldo = v;
   
     }
   });
 
-  data.bcVersicherung1Saldo="0";
-  web3.eth.getBalance(data.bcVersicherung1,(err,value) => {
+  data.bcVersicherungSaldo="0";
+  web3.eth.getBalance(data.bcVersicherungDef,(err,value) => {
     if (err) { console.log(err); }
     if (!err) { 
       var v = value / 1e18;
-      data.bcVersicherung1Saldo = v;
+      data.bcVersicherungSaldo = v;
     }
   });
-
-  data.bcVersicherung2Saldo="0";
-  web3.eth.getBalance(data.bcVersicherung2,(err,value) => {
-    if (err) { console.log(err); }
-    if (!err) { 
-      var v = value / 1e18;
-      data.bcVersicherung2Saldo = v;
-    }
-  });
-
-
   data.bcSpeditionSaldo="0";
-  web3.eth.getBalance(data.bcSpedition,(err,value) => {
+  web3.eth.getBalance(data.bcSpeditionDef,(err,value) => {
     if (err) { console.log(err); }
     if (!err) { 
       var v = value / 1e18;
       data.bcSpeditionSaldo = v;
     }
   });
-  data.bcBankSaldo="0";
-  web3.eth.getBalance(data.bcBank,(err,value) => {
+  data.bcAccountSaldo="0";
+  web3.eth.getBalance(data.bcAccountDef,(err,value) => {
     if (err) { console.log(err); }
     if (!err) { 
       var v = value / 1e18;
-      data.bcBankSaldo = v;
+      data.bcAccountSaldo = v;
     }
   });
 
@@ -264,9 +253,7 @@ function seiteDashboard(data) {
 function seiteVor(data) {
   console.log("link aufbauen");
   var link ="kp.html?";
-  link=link+"km="+ data.kpManager;
-  link=link+"&vr1=" + data.bcVersicherung1;
-  link=link+"&vr2=" + data.bcVersicherung2;
+  link=link+"bcm="+data.bcManagerDef;
   window.open(link);
 
 }
@@ -282,16 +269,14 @@ function initVue() {
   const data = {
 
 
-    kpManager : "",
-    kpManagerSaldo : "",
-    bcSpedition : "",
+    bcManagerDef : "",
+    bcManagerSaldo : "",
+    bcSpeditionDef : "",
     bcSpeditionSaldo : "",
-    bcVersicherung1 : "",
-    bcVersicherung1Saldo : "",
-    bcVersicherung2 : "",
-    bcVersicherung2Saldo : "",
-    bcBank : "",
-    bcBankSaldo : "",
+    bcVersicherungDef : "",
+    bcVersicherungSaldo : "",
+    bcAccountDef : "",
+    bcAccountSaldo : "",
 
     bcWaehrung : "EVE",
     bcGebuehr1 : "",
@@ -377,11 +362,10 @@ function initVue() {
       }
 
       // Initialwerte setzen 
-      data.kpManager = kpManager;
-      data.bcSpedition = bcSpedition;
-      data.bcVersicherung1 = bcVersicherung1;
-      data.bcVersicherung2 = bcVersicherung2;
-      data.bcBank = bcBank;
+      data.bcManagerDef = bcManagerDef;
+      data.bcSpeditionDef = bcSpeditionDef;
+      data.bcVersicherungDef = bcVersicherungDef;
+      data.bcAccountDef = bcAccountDef;
       data.bcPrototypVersion = bcPrototypVersion;
       
       

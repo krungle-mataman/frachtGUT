@@ -6,14 +6,17 @@
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <link rel="stylesheet" href="fg.css">
 
-    <script type="text/javascript"> bcPrototypVersion="1.01"</script>
+    <script type="text/javascript"> bcPrototypVersion="1.0"</script>
    
-    <script type="text/javascript"> kpManager="0x427EF5Aec9ca3e2adD827C21c866dD83B7c127e1"</script>
-    <script type="text/javascript"> bcSpedition="0x28574a361D06abddfC7660049B627cE16C550649"</script>
-    <script type="text/javascript"> bcVersicherung1="0x212795dA9B7a58F9FD227381A07d1Cf74d42e771"</script>
-    <script type="text/javascript"> bcVersicherung2="0x212795dA9B7a58F9FD227381A07d1Cf74d42e771"</script>
-    <script type="text/javascript"> bcBank="0xE249Ec6CCB531E000BaE2bc0B6308A8621f06c05"</script>
+    <script type="text/javascript"> bcManagerDef="0x427EF5Aec9ca3e2adD827C21c866dD83B7c127e1"</script>
+    <script type="text/javascript"> bcSpeditionDef="0x28574a361D06abddfC7660049B627cE16C550649"</script>
+    <script type="text/javascript"> bcVersicherungDef="0x212795dA9B7a58F9FD227381A07d1Cf74d42e771"</script>
+    <script type="text/javascript"> bcAccountDef="0xE249Ec6CCB531E000BaE2bc0B6308A8621f06c05"</script>
 
+    <script type="text/javascript"> bcManagerAdv="0x6b1010876dd0d4b74510350f82d687474FC186b1"</script>
+    <script type="text/javascript"> bcSpeditionAdv="0x2615E158049CB66C8f331B28c90f2E3D4a9CA626"</script>
+    <script type="text/javascript"> bcVersicherungAdv="0x2C9403D894a134e173D6bC56898EFD84B78d45B6"</script>
+    <script type="text/javascript"> bcAccountAdv="0xd432dC0FCE0Bc21598Fe4bc6338B81DE35A1b0Fe"</script>
 
     <script type="text/javascript"> fgDefaultGaslimit = "200000000"</script>
     <script type="text/javascript"> fgDefaultGasprice = "10000000000"</script>
@@ -23,6 +26,7 @@
     <script type="text/javascript"> gebuehr2=2000000000000000000000</script>
     <script type="text/javascript"> gebuehr1=10000000000000000000</script>
     <script type="text/javascript"> gebuehr0=0;</script>
+    <script type="text/javascript"> kooperationContractADR = "0xe066bA50A094ee9304d28C1Eb2685609459B7CEA";</script>
   
     <script>
         window.onload = function() {
@@ -88,7 +92,7 @@
           <tr>
             <td>
               <button v-on:click="BlockchainAktualisieren" id="bt2" class="action">Blockchain aktualisieren</button>
-              <button v-on:click="BlockchainAnzeigen" id="bt2" class="action">Netzwerk anzeigen</button>
+              <button v-on:click="BlockchainAnzeigen" id="bt2" class="action">Blockchain anzeigen</button>
             </td>
           </tr>
         </table>
@@ -106,34 +110,29 @@
               <th>Währung</th>
             </tr>
             <tr>
-              <td class="feld">Kooperations-Manager</td>
-              <td><input v-model="kpManager" size="50" class="eingabe" ></td>
-              <td class="adresse">{{ kpManagerSaldo }} </td>
+              <td class="feld">Management-Account</td>
+              <td><input v-model="bcManagerDef" size="50" class="eingabe" ></td>
+              <td class="adresse">{{ bcManagerSaldo }} </td>
               <td class="adresse">{{ bcWaehrung }} </td>
             </tr>
             <tr>
-                <td class="feld">Versicherung digitalNr1</td>
-                <td><input v-model="bcVersicherung1" size="50" class="eingabe" ></td>
-                <td class="adresse">{{ bcVersicherung1Saldo }} </td>
+                <td class="feld">Versicherung-Account</td>
+                <td><input v-model="bcVersicherungDef" size="50" class="eingabe" ></td>
+                <td class="adresse">{{ bcVersicherungSaldo }} </td>
                 <td class="adresse">{{ bcWaehrung }} </td>
               </tr>
-              <tr>
-                <td class="feld">Versicherung AsienInvasion (LTD)</td>
-                <td><input v-model="bcVersicherung2" size="50" class="eingabe" ></td>
-                <td class="adresse">{{ bcVersicherung2Saldo }} </td>
-                <td class="adresse">{{ bcWaehrung }} </td>
-              </tr>
+    
             <tr>
-                <td class="feld">Spedition fast&furios</td>
-                <td><input v-model="bcSpedition" size="50" class="eingabe" ></td>
+                <td class="feld">Spedition-Account</td>
+                <td><input v-model="bcSpeditionDef" size="50" class="eingabe" ></td>
                 <td class="adresse">{{ bcSpeditionSaldo }} </td>
                 <td class="adresse">{{ bcWaehrung }} </td>
               </tr>
     
             <tr>
-              <td class="feld">Bank Traditionale AG</td>
-              <td><input v-model="bcBank" size="50" class="eingabe" ></td>
-              <td class="adresse">{{ bcBankSaldo }} </td>
+              <td class="feld">Teilnehmer-Account</td>
+              <td><input v-model="bcAccountDef" size="50" class="eingabe" ></td>
+              <td class="adresse">{{ bcAccountSaldo }} </td>
               <td class="adresse">{{ bcWaehrung }} </td>
             </tr>
           </table>
@@ -227,8 +226,6 @@
               <h3> 
                 <img src="bcclogo.png" width="150" height="20"> 
                 FrachtGUT - ein Produkt der Block-Chain-Community ( {{ bcPrototypVersion }} )
-                <link rel="stylesheet" href="impressum.html">
-                <a href="impressum.html">....mehr..</a>
               </h3>
 
       

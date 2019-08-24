@@ -5,18 +5,20 @@
     <script src="vv.js"></script>
     <link rel="stylesheet" href="fg.css">
 
+    <script type="text/javascript"> bcPrototypVersion="1.03"</script>
+
     <script type="text/javascript"> bcManager="0xBd43Bc29C3702c3AD45cD282B6B52E9f5f3d8B5D"</script>
     <script type="text/javascript"> bcSpedition="0x2615E158049CB66C8f331B28c90f2E3D4a9CA626"</script>
     <script type="text/javascript"> bcVersicherung="0x2C9403D894a134e173D6bC56898EFD84B78d45B6"</script>
     <script type="text/javascript"> bcAccount="0xc9624535E370fc03362Fdd9Ca96dd085e7B0b920"</script>
 
-    <script type="text/javascript"> fgDefaultGaslimit = "200000"</script>
+    <script type="text/javascript"> fgDefaultGaslimit = "200000000"</script>
     <script type="text/javascript"> fgDefaultGasprice = "10000000000"</script>
     <script type="text/javascript"> fgDefaultGas = "4700000"</script>
     <script type="text/javascript"> fgGaslimit = 200000</script>
     
-    <script type="text/javascript"> gebuehr2=1000000000000000000000</script>
-    <script type="text/javascript"> gebuehr1=1000000000000000000;</script>
+    <script type="text/javascript"> gebuehr2=2000000000000000000000</script>
+    <script type="text/javascript"> gebuehr1=10000000000000000000</script>
     <script type="text/javascript"> gebuehr0=0;</script>
 
     <script type="text/javascript"> kooperationContractADR = "0x8bA835Dc8531f6E0f7C44047603674278e09370F"</script>
@@ -57,7 +59,7 @@
 <body>
     <div id="app">
       <div class="titel">
-          <h3><img src="bcclogo.png" width="100" height="100" align="right"> </h3>
+          <h3><img src="evanlogo.png" width="100" height="100" align="right"> </h3>
           <h1 >FrachtGUT</h1>
           <h2>Ein Prototyp zur Frachtverfolgung und Schadenmeldung</h2>
       </div>
@@ -172,7 +174,7 @@
                           <td><button id="bt2" class="action" v-on:click="VersicherungsvertragAnzeigen">Vertrag anzeigen</button></td>
                           <td><button id="bt2" class="action" v-on:click="VersicherungsvertragAendern">Vertrag ändern</button></td>
                           <td><button v-on:click="VersicherungsvertragAnlegen" id="bt2" class="action">Vertrag anlegen</button></td></td>
-                          <td><button id="bt2" class="action" v-on:click="VersicherungsvertragRegistrieren">Vertrag beenden</button></td>
+                          <td><button id="bt2" class="action" v-on:click="VersicherungsvertragRegistrieren">Vertrag bezahlen</button></td>
                       </tr>
 
 
@@ -194,28 +196,17 @@
               </div>
             </div>
 
-
-
-              <div class="system">Systeminformationen </div>
-              <table class="system"> 
-                <tr >
-                    <td>Nachrichten:</td><td colspan="3" >{{ Systeminfo }}</td>
-                </tr> 
-                <tr>
-                  <td>Aktionen</td>
-                  <td><button v-on:click="TestparameterErzeugen" class="action">Testparameter belegen</button></td>
-                  <td><button v-on:click="TestdatenErzeugen" class="action">Testdaten erzeugen</button></td>
-                </tr>
-                <tr>
-                  <td>Transaktionsparameter</td>
-                  <td  size="25">{{ trInfo4 }} </td>
-                  <td  size="15">{{ trInfo1 }} </td>     
-                  <td  size="15">{{ trInfo2 }} </td> 
-                  <td  size="15">{{ trInfo3 }} </td> 
- 
-                </tr>
-              </table>
-            </div>
+            <div class="fusszeile">
+                <h3>                <img src="bcclogo.png" width="150" height="20"> 
+                  FrachtGUT - ein Produkt der Block-Chain-Community ( {{ bcPrototypVersion }} )
+  </h3>
+                <div class="system">
+                  <button v-on:click="EingabefelderInitialisieren" class="utility">...</button>
+                  Manager :{{ bcManager }} / {{ trInfo1 }} / {{ trInfo2 }} / {{ trInfo3 }}
+                </div>
+             </div>
+    
+  
     
 
 

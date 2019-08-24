@@ -3,20 +3,23 @@
 <head>
     <script src="https://unpkg.com/vue"></script>
     <script src="tp.js"></script>
+    <script src="bignumber.js"></script>
     <link rel="stylesheet" href="fg.css">
   
+    <script type="text/javascript"> bcPrototypVersion="1.02"</script>
+
     <script type="text/javascript"> bcManager="0xBd43Bc29C3702c3AD45cD282B6B52E9f5f3d8B5D"</script>
     <script type="text/javascript"> bcSpedition="0x2615E158049CB66C8f331B28c90f2E3D4a9CA626"</script>
     <script type="text/javascript"> bcVersicherung="0x2C9403D894a134e173D6bC56898EFD84B78d45B6"</script>
     <script type="text/javascript"> bcAccount="0xc9624535E370fc03362Fdd9Ca96dd085e7B0b920"</script>
 
-    <script type="text/javascript"> fgDefaultGaslimit = "200000"</script>
+    <script type="text/javascript"> fgDefaultGaslimit = "200000000"</script>
     <script type="text/javascript"> fgDefaultGasprice = "10000000000"</script>
     <script type="text/javascript"> fgDefaultGas = "4700000"</script>
     <script type="text/javascript"> fgGaslimit = 200000</script>
     
-    <script type="text/javascript"> gebuehr2=1000000000000000000000</script>
-    <script type="text/javascript"> gebuehr1=1000000000000000000;</script>
+    <script type="text/javascript"> gebuehr2=2000000000000000000000</script>
+    <script type="text/javascript"> gebuehr1=10000000000000000000</script>
     <script type="text/javascript"> gebuehr0=0;</script>
 
   
@@ -61,7 +64,7 @@
   <div id="app">
     <header>
       <div class="titel">
-          <h3><img src="bcclogo.png" width="100" height="100" align="right"> </h3>
+          <h3><img src="evanlogo.png" width="100" height="100" align="right"> </h3>
 
         <h1 >FrachtGUT</h1>
         <h2>Ein Prototyp zur Frachtverfolgung und Schadenmeldung</h2>
@@ -92,7 +95,6 @@
                 <th>Auswahl</th>
                 <th>Spedition</th>
                 <th>Absender</th>
-                <th>Datum</th>
                 <th>Status</th>
                 <th>Warenwert</th>
                 <th>ID</th>
@@ -103,7 +105,6 @@
               <td><button id="bt1" @click="TransportAuswaehlen(transport.adresse)">.</button></td>
               <td>{{ transport.spedition }} </td>
               <td>{{ transport.absender }} </td>
-              <td>{{ transport.ort }} </td>
               <td>{{ transport.status}} </td>
               <td>{{ transport.warenwert}} </td>
               <td class="adresse">{{ transport.adresse}} </td>
@@ -167,6 +168,7 @@
                 <td><button id="bt2" class="action" v-on:click="TransportAnzeigen">Transport anzeigen</button></td>
                 <td><button id="bt2" class="action" v-on:click="TransportAendern">Transport ändern</button></td>
                 <td><button id="bt2" class="action" v-on:click="TransportAnlegen">Transport Anlegen</button></td>        
+                <td><button id="bt2" class="action" v-on:click="TransportAbrechnen">Transport Abrechnen</button></td>        
             </tr>
         </table>
 
@@ -185,7 +187,6 @@
               <th>Frachtführer</th>
               <th>Menge</th>
               <th>Schaden</th>
-              <th>ID</th>
             </tr>
         </thead>
         <tbody>
@@ -196,12 +197,11 @@
                   <td>{{ route.frachtfuehrer }} </td>
                   <td>{{ route.menge }}</td>
                   <td>{{ route.schaden }} </td>
-                  <td>{{ route.adresse }} </td>
                 </tr>
           </tbody>
         <tfoot>
             <tr>
-              <td colspan="8" class="anmerkung" >Liste aller Routen zum o.g. Transport in der bc frachtGUT</td>
+              <td colspan="8" class="anmerkung" >Liste aller Übergaben des Transports in der bc frachtGUT</td>
               </tr>
         </tfoot>
     </table>
@@ -210,7 +210,10 @@
         <div class="aktionen">
           <tr>Aktionen:</tr>
           <tr>
-            <td><button id="bt2" class="action" v-on:click="RoutenSuchen">Routen suchen</button></td>
+              <td><button id="bt2" class="action" v-on:click="RoutenSuchen">Routen suchen</button></td>
+
+            <td><button id="bt2" class="action" v-on:click="SchadenMelden">Schäden melden</button></td>
+            <td><button id="bt2" class="action" v-on:click="RoutenAnzeigen">Gesamtroute anzeigen</button></td>
           </tr>        
         </div>
     </table>
@@ -219,19 +222,21 @@
 
 
     <div class="ebene1">
-        <p class="abschnitt">Übergabe ({{ dieRoute }})</p> 
+        <p class="abschnitt">Übernahme ({{ dieRoute }})</p> 
         <table>
           <tr>
-            <td class="feld">Von-Ort</td><td><input v-model="rtVon" class="eingabe" placeholder="startort"></td>
-            <td class="feld">am Datum</td>  <td><input v-model="rtAbfahrt" class="eingabe" placeholder="abfahrtsdatum"></td>
+              <td class="feld">Nr</td><td><input v-model="rtNr" class="eingabe"></td>
+              <td class="feld">Frachführer</td><td><input v-model="rtFrachtfuehrer" class="eingabe"></td>
+            </tr>
+            <tr>
+            <td class="feld">Ort</td><td><input v-model="rtOrt" class="eingabe" ></td>
+            <td class="feld">Datum</td>  <td><input v-model="rtDatum" class="eingabe" ></td>
           </tr>
           <tr>
-              <td class="feld">Nach-Ort</td>  <td><input v-model="rtNach" class="eingabe" placeholder="zielort"></td>
-              <td class="feld">zum Datum</td>  <td><input v-model="rtAnkunft" class="eingabe" placeholder="ankunftdatum"></td>
+              <td class="feld">Menge</td>  <td><input v-model="rtMenge" class="eingabe" ></td>
+              <td class="feld">Schadenmeldung</td>  <td><input v-model="rtSchaden" class="eingabe" placeholder="ankunftdatum"></td>
           </tr>
-          <tr>
-              <td class="feld">Schaden</td> <td><input v-model="rtSchaden" class="eingabe" placeholder="0-nein / 1-Total / 2-Pruef"></td>
-          </tr>
+
         </table>
         <table>
           <div class="aktionen">
@@ -239,27 +244,21 @@
             <tr>
               <td><button v-on:click="RouteAendern" id="bt2" class="action">Übergabe ändern</button></td>
               <td><button v-on:click="RouteAnlegen" id="bt2" class="action">Übergabe anlegen</button></td>
-              <td><button id="bt2" class="action" v-on:click="RoutenAnzeigen">Route auf Karte anzeigen</button></td>
+              <td><button v-on:click="UebergabeAnzeigen" id="bt2" class="action">Übergabe anzeigen</button></td>
             </tr>   
           </div>  
         </table>
     </div>
 
     <footer>
-      <div class="system">Systeminformationen </div>
-        <table class="system"> 
-          <tr>
-            <td>Aktionen</td>
-            <td><button v-on:click="TestparameterErzeugen" class="action">Testparameter belegen</button></td>
-          </tr>
-          <tr>
-            <td>Transaktionsparameter</td>
-            <td  size="25">{{ trInfo4 }} </td> 
-            <td  size="25">{{ trInfo1 }} </td>     
-            <td  size="25">{{ trInfo2 }} </td> 
-            <td  size="25">{{ trInfo3 }} </td> 
-          </tr>
-        </table>
+      <div class="fusszeile">
+          <h3>                <img src="bcclogo.png" width="150" height="20"> 
+            FrachtGUT - ein Produkt der Block-Chain-Community ( {{ bcPrototypVersion }} )
+</h3>
+          <div class="system">
+            <button v-on:click="EingabefelderInitialisieren" class="utility">...</button>
+            Manager :{{ bcManager }} / {{ trInfo1 }} / {{ trInfo2 }} / {{ trInfo3 }}
+          </div>
       </div>
   </footer>
 
